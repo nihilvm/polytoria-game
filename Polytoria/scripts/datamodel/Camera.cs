@@ -652,9 +652,9 @@ public sealed partial class Camera : Dynamic
 			Input.MouseMode = Input.MouseModeEnum.Visible;
 			Root.Input.OverrideMousePos = false;
 			GDNode.GetViewport().WarpMouse(_turnStartPos);
-			#if GODOT_WINDOWS
+#if GODOT_WINDOWS
 			GDNode.GetViewport().WarpMouse(_turnStartPos); // Calling this twice fixes issues when releasing while dragging the mouse
-			#endif
+#endif
 		}
 	}
 
@@ -748,9 +748,9 @@ public sealed partial class Camera : Dynamic
 					Input.MouseMode = Input.MouseModeEnum.Visible;
 					Vector2 globalMousePos = GDNode.GetViewport().GetScreenTransform().Origin + _lastMousePosition;
 					Input.WarpMouse(globalMousePos);
-					#if GODOT_WINDOWS
+#if GODOT_WINDOWS
 					Input.WarpMouse(globalMousePos); // Calling this twice fixes issues when releasing while dragging the mouse
-					#endif
+#endif
 
 					_currentMovement = Vector3.Zero;
 					_currentRotation = Vector2.Zero;
