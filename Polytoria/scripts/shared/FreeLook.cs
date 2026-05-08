@@ -95,6 +95,7 @@ public sealed partial class FreeLook : Camera3D
 					Input.MouseMode = Input.MouseModeEnum.Visible;
 					Vector2 globalMousePos = GetViewport().GetScreenTransform().Origin + _lastMousePosition;
 					Input.WarpMouse(globalMousePos);
+					Input.WarpMouse(globalMousePos); // Calling this twice fixes issues when releasing while dragging the mouse
 
 					_currentMovement = Vector3.Zero;
 					_currentRotation = Vector2.Zero;
