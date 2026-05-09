@@ -70,8 +70,8 @@ public sealed partial class InputService : Instance
 		}
 	}
 
-	[ScriptProperty] public Vector2 MousePosition => OverrideMousePos ? OverrideMousePosTo : GDNode.GetViewport().GetMousePosition().Flip();
-	[ScriptLegacyProperty("MousePosition")] public Vector3 LegacyMousePosition => new(MousePosition.X, ScreenHeight - MousePosition.Y, 0);
+	[ScriptProperty] public Vector2 MousePosition => OverrideMousePos ? OverrideMousePosTo : GDNode.GetViewport().GetMousePosition().Reorient(ScreenHeight - 1);
+	[ScriptLegacyProperty("MousePosition")] public Vector3 LegacyMousePosition => new(MousePosition.X, MousePosition.Y, 0);
 	[ScriptProperty] public int ScreenWidth => (int)GDNode.GetViewport().GetVisibleRect().Size.X;
 	[ScriptProperty] public int ScreenHeight => (int)GDNode.GetViewport().GetVisibleRect().Size.Y;
 
@@ -563,7 +563,7 @@ public sealed partial class InputService : Instance
 		if (camera == null || viewport == null)
 			return Vector3.Zero;
 
-		Vector2 mousePos = MousePosition.Flip();
+		Vector2 mousePos = MousePosition.Reorient(ScreenHeight - 1);
 		Vector3 rayOrigin = camera.ProjectRayOrigin(mousePos);
 		Vector3 rayDir = camera.ProjectRayNormal(mousePos);
 

@@ -848,7 +848,7 @@ public sealed partial class Camera : Dynamic
 	{
 		Viewport viewport = GDNode.GetViewport();
 		Vector2 size = viewport.GetVisibleRect().Size;
-		Vector2 screenPos = new(pos.X * size.X, pos.Y * size.Y);
+		Vector2 screenPos = new(pos.X * size.X, (1 - pos.Y) * (size.Y - 1));
 		Vector3 rayOrigin = Camera3D.ProjectRayOrigin(screenPos);
 		Vector3 rayDir = Camera3D.ProjectRayNormal(screenPos);
 		return Root.Environment.Raycast(rayOrigin.Flip(), rayDir.Flip(), maxDistance, ignoreList);
@@ -857,7 +857,7 @@ public sealed partial class Camera : Dynamic
 	[ScriptMethod]
 	public RayResult? ScreenPointToRay(Vector2 pos, Instance[]? ignoreList = null, float maxDistance = 10000f)
 	{
-		pos = pos.Flip();
+		pos = pos.Reorient(GDNode.GetViewport().GetVisibleRect().Size.Y - 1);
 		Vector3 rayOrigin = Camera3D.ProjectRayOrigin(pos);
 		Vector3 rayDir = Camera3D.ProjectRayNormal(pos);
 		return Root.Environment.Raycast(rayOrigin.Flip(), rayDir.Flip(), maxDistance, ignoreList);
@@ -868,7 +868,7 @@ public sealed partial class Camera : Dynamic
 	{
 		Viewport viewport = GDNode.GetViewport();
 		Vector2 size = viewport.GetVisibleRect().Size;
-		return new Vector2(pos.X * size.X, pos.Y * size.Y).Flip();
+		return new Vector2(pos.X * size.X, pos.Y * (size.Y - 1));
 	}
 
 	[ScriptMethod]
@@ -876,7 +876,7 @@ public sealed partial class Camera : Dynamic
 	{
 		Viewport viewport = GDNode.GetViewport();
 		Vector2 size = viewport.GetVisibleRect().Size;
-		Vector2 screenPos = new(pos.X * size.X, pos.Y * size.Y);
+		Vector2 screenPos = new(pos.X * size.X, (1 - pos.Y) * (size.Y - 1));
 		Vector3 origin = Camera3D.ProjectRayOrigin(screenPos);
 		Vector3 direction = Camera3D.ProjectRayNormal(screenPos);
 		return (origin + direction * Camera3D.Near).Flip();
@@ -889,7 +889,7 @@ public sealed partial class Camera : Dynamic
 		Viewport viewport = GDNode.GetViewport();
 		Vector2 screenPos = Camera3D.UnprojectPosition(pos);
 		Vector2 size = viewport.GetVisibleRect().Size;
-		return new Vector2(screenPos.X / size.X, screenPos.Y / size.Y);
+		return new Vector2(screenPos.X / size.X, 1 - screenPos.Y / (size.Y - 1));
 	}
 
 	[ScriptMethod]
@@ -897,27 +897,26 @@ public sealed partial class Camera : Dynamic
 	{
 		pos = pos.Flip();
 		Vector2 unprojected = Camera3D.UnprojectPosition(pos);
-		return unprojected.Flip();
+		return unprojected.Reorient(GDNode.GetViewport().GetVisibleRect().Size.Y - 1);
 	}
 
 	[ScriptMethod]
 	public Vector2 ScreenToViewportPoint(Vector2 pos)
 	{
-		pos = pos.Flip();
 		Viewport viewport = GDNode.GetViewport();
 		if (viewport == null)
 			return Vector2.Zero;
 
 		Vector2 size = viewport.GetVisibleRect().Size;
-		return new Vector2(pos.X / size.X, pos.Y / size.Y);
+		return new Vector2(pos.X / size.X, pos.Y / (size.Y - 1));
 	}
 
 	[ScriptMethod]
 	public Vector3 ScreenToWorldPoint(Vector2 pos)
 	{
-		pos = pos.Flip();
-		Vector3 rayOrigin = Camera3D.ProjectRayOrigin(new(pos.X, pos.Y));
-		Vector3 rayDir = Camera3D.ProjectRayNormal(new(pos.X, pos.Y));
+		pos = pos.Reorient(GDNode.GetViewport().GetVisibleRect().Size.Y - 1);
+		Vector3 rayOrigin = Camera3D.ProjectRayOrigin(pos);
+		Vector3 rayDir = Camera3D.ProjectRayNormal(pos);
 		return (rayOrigin + rayDir * Camera3D.Near).Flip();
 	}
 

@@ -24,6 +24,15 @@ public static class MathUtils
 		return vector2;
 	}
 
+	/// <summary>
+	/// Helper to perform the math for converting between Godot and Polytoria screen units
+	/// </summary>
+	public static Vector2 ReorientVector2(Vector2 vector2, float y)
+	{
+		vector2.Y = y - vector2.Y;
+		return vector2;
+	}
+
 	public static Quaternion FlipQuat(Quaternion quat)
 	{
 		return new(-quat.X, -quat.Y, quat.Z, quat.W);
@@ -63,6 +72,11 @@ public static class MathUtilsExtensions
 	public static Vector2 Flip(this Vector2 v)
 	{
 		return MathUtils.FlipVector2(v);
+	}
+
+	public static Vector2 Reorient(this Vector2 v, float y)
+	{
+		return MathUtils.ReorientVector2(v, y);
 	}
 
 	public static Vector3 Flip(this Vector3 v)
