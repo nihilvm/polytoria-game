@@ -653,7 +653,7 @@ public sealed partial class Camera : Dynamic
 			Root.Input.OverrideMousePos = false;
 			GDNode.GetViewport().WarpMouse(_turnStartPos);
 #if GODOT_WINDOWS
-			GDNode.GetViewport().WarpMouse(_turnStartPos); // Calling this twice fixes issues when releasing while dragging the mouse
+			GDNode.GetViewport().WarpMouse(_turnStartPos); // Workaround for godotengine/godot#119205
 #endif
 		}
 	}
@@ -749,7 +749,7 @@ public sealed partial class Camera : Dynamic
 					Vector2 globalMousePos = GDNode.GetViewport().GetScreenTransform().Origin + _lastMousePosition;
 					Input.WarpMouse(globalMousePos);
 #if GODOT_WINDOWS
-					Input.WarpMouse(globalMousePos); // Calling this twice fixes issues when releasing while dragging the mouse
+					Input.WarpMouse(globalMousePos); // Workaround for godotengine/godot#119205
 #endif
 
 					_currentMovement = Vector3.Zero;

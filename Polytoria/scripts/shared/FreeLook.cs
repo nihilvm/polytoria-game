@@ -96,7 +96,7 @@ public sealed partial class FreeLook : Camera3D
 					Vector2 globalMousePos = GetViewport().GetScreenTransform().Origin + _lastMousePosition;
 					Input.WarpMouse(globalMousePos);
 #if GODOT_WINDOWS
-					Input.WarpMouse(globalMousePos); // Calling this twice fixes issues when releasing while dragging the mouse
+					Input.WarpMouse(globalMousePos); // Workaround for godotengine/godot#119205
 #endif
 
 					_currentMovement = Vector3.Zero;
