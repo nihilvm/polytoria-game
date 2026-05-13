@@ -7,6 +7,7 @@ using Polytoria.Creator.Properties;
 using Polytoria.Shared;
 using Polytoria.Shared.Settings;
 using System;
+using System.Linq;
 
 namespace Polytoria.Creator.UI.Components;
 
@@ -17,6 +18,7 @@ public partial class SettingsPropertyUI : Control
 
 	public SettingDef SettingDef { get; private set; } = null!;
 	public ISettingsContext SettingsContext { get; private set; } = null!;
+	public bool _visible = true;
 
 	private IProperty _input = null!;
 	private bool _suppressChanged;
@@ -47,6 +49,9 @@ public partial class SettingsPropertyUI : Control
 
 		((Control)input).SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
 
+		if (SettingDef.Conditions != null)
+			Visible = _visible = false;
+
 		_input = input;
 		SettingsContext.Changed += OnExternalChanged;
 
@@ -57,6 +62,16 @@ public partial class SettingsPropertyUI : Control
 
 			try
 			{
+				// Visible at start?
+				if (SettingDef.Conditions != null)
+				{
+					Visible = _visible = SettingDef.Conditions.Any((cond) =>
+					{
+						object? value = SettingsContext.GetUntyped(cond.Target);
+						return cond.UntypedPredicate(value);
+					});
+				}
+
 				object? currentValue = SettingsContext.GetUntyped(SettingDef.Key);
 				input.SetValue(currentValue);
 
@@ -83,6 +98,14 @@ public partial class SettingsPropertyUI : Control
 
 	private void OnExternalChanged(SettingChangedEvent e)
 	{
+		// Recompute visibility
+		if (SettingDef.Conditions != null)
+		{
+			var match = SettingDef.Conditions.Where(c => c.Target == e.Key);
+			if (match.Any())
+				Visible = _visible = match.Any(c => c.UntypedPredicate(e.NewValue));
+		}
+
 		if (_suppressChanged || e.Key != SettingDef.Key)
 			return;
 
