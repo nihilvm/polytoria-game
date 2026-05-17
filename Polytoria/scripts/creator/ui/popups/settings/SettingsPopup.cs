@@ -59,7 +59,7 @@ public sealed partial class SettingsPopup : PopupWindowBase
 
 	private void OnItemSelected()
 	{
-		if (!_itemToSectionKey.TryGetValue(_categoryTree.GetSelected(), out string sectionKey))
+		if (!_itemToSectionKey.TryGetValue(_categoryTree.GetSelected(), out var sectionKey))
 			return;
 
 		if (sectionKey == _activeSection)
@@ -91,7 +91,7 @@ public sealed partial class SettingsPopup : PopupWindowBase
 		else
 		{
 			foreach (var ui in cachedUIs)
-				ui.Visible = ui._visible;
+				ui.Visible = ui.PropertyVisible;
 		}
 	}
 }

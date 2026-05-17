@@ -18,7 +18,7 @@ public partial class SettingsPropertyUI : Control
 
 	public SettingDef SettingDef { get; private set; } = null!;
 	public ISettingsContext SettingsContext { get; private set; } = null!;
-	public bool _visible = true;
+	public bool PropertyVisible = true;
 
 	private IProperty _input = null!;
 	private bool _suppressChanged;
@@ -50,7 +50,7 @@ public partial class SettingsPropertyUI : Control
 		((Control)input).SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
 
 		if (SettingDef.Conditions != null)
-			Visible = _visible = false;
+			Visible = PropertyVisible = false;
 
 		_input = input;
 		SettingsContext.Changed += OnExternalChanged;
@@ -65,7 +65,7 @@ public partial class SettingsPropertyUI : Control
 				// Visible at start?
 				if (SettingDef.Conditions != null)
 				{
-					Visible = _visible = SettingDef.Conditions.Any((cond) =>
+					Visible = PropertyVisible = SettingDef.Conditions.Any((cond) =>
 					{
 						object? value = SettingsContext.GetUntyped(cond.Target);
 						return cond.UntypedPredicate(value);
@@ -103,7 +103,7 @@ public partial class SettingsPropertyUI : Control
 		{
 			var match = SettingDef.Conditions.Where(c => c.Target == e.Key);
 			if (match.Any())
-				Visible = _visible = match.Any(c => c.UntypedPredicate(e.NewValue));
+				Visible = PropertyVisible = match.Any(c => c.UntypedPredicate(e.NewValue));
 		}
 
 		if (_suppressChanged || e.Key != SettingDef.Key)
